@@ -41,7 +41,7 @@ First line ke do options:
 
 Dono mein se bada sum `currentSum` banega. Phir usse `maxSum` ke saath compare karte hain.
 
-## 3. Java solution — interview-ready
+## 3. Java solution — maximum sum return karna
 
 ```java
 class Solution {
@@ -91,40 +91,97 @@ Best subarray: `[2, 3, 5, -2, 7]`.
 
 Notice: `currentSum` last mein `11` hai, lekin answer `maxSum = 15` hai. Last element include karna zaroori nahi hai.
 
-## 6. Edge cases
+## 6. Agar interviewer actual subarray bhi maange
+
+Bhai, sum ke saath actual subarray return karne ke liye **starting aur ending indices** track kar lo.
+
+- `tempStart`: current candidate subarray ka starting index.
+- `start`: best subarray ka final starting index.
+- `end`: best subarray ka final ending index.
+
+### Java code — actual subarray return karo
+
+```java
+import java.util.Arrays;
+
+class Solution {
+    public int[] maxSubArray(int[] nums) {
+        int currentSum = nums[0];
+        int maxSum = nums[0];
+
+        int tempStart = 0;
+        int start = 0;
+        int end = 0;
+
+        for (int i = 1; i < nums.length; i++) {
+            // Current number se naya subarray start karna better hai?
+            if (nums[i] > currentSum + nums[i]) {
+                currentSum = nums[i];
+                tempStart = i;
+            } else {
+                currentSum += nums[i];
+            }
+
+            // Naya maximum mila? Uske indices save karo.
+            if (currentSum > maxSum) {
+                maxSum = currentSum;
+                start = tempStart;
+                end = i;
+            }
+        }
+
+        // end inclusive hai; copyOfRange ka ending index exclusive hota hai.
+        return Arrays.copyOfRange(nums, start, end + 1);
+    }
+}
+```
+
+Given example ke liye:
+
+- `start = 0`
+- `end = 4`
+- Returned subarray: `[2, 3, 5, -2, 7]`
+- Sum: `15`
+
+**`end + 1` kyun?** Java ke `Arrays.copyOfRange(array, from, to)` mein `from` included hota hai lekin `to` excluded. Isliye ending index ko `end + 1` pass karte hain.
+
+### Agar sum aur subarray dono return karne hon
+
+`maxSum` ko saath mein return karne ke liye ek small result class bana sakte ho, jisme `sum`, `start`, `end` ya `subarray` fields hon. Interview mein pehle clarify karo ki output sirf sum chahiye, indices chahiye, ya actual elements.
+
+## 7. Edge cases
 
 ### A. All numbers negative
 
 Input: `[-8, -3, -6, -2, -5, -4]`
 
-Answer: `-2`.
+Maximum sum: `-2`. Actual subarray: `[-2]`.
 
 Since subarray non-empty hai, hum `0` return nahi kar sakte. Isi liye `currentSum` and `maxSum` ko `nums[0]` se initialize karte hain.
 
 ### B. Single element
 
-Input: `[5]` → answer `5`.
+Input: `[5]` → sum `5`, subarray `[5]`.
 
-Loop run nahi hota; initialized `maxSum` hi answer hai.
-
-Input: `[-5]` → answer `-5`, not zero.
+Input: `[-5]` → sum `-5`, subarray `[-5]`.
 
 ### C. Zeroes
 
-Input: `[0, 0, 0]` → answer `0`.
+Input: `[0, 0, 0]` → maximum sum `0`. Multiple subarrays tie kar sakte hain; code unmein se ek valid subarray return karta hai.
 
 ### D. Positive numbers ke beech negative number
 
-Input: `[4, -1, 2, 1]` → answer `6`.
+Input: `[4, -1, 2, 1]` → maximum sum `6`, subarray `[4, -1, 2, 1]`.
 
 Negative `-1` include karna phir bhi useful hai, kyunki poora continuous subarray sum `6` hota hai.
 
-## 7. Complexity
+## 8. Complexity
 
 - **Time: `O(n)`** — array ko ek baar traverse karte hain.
-- **Extra space: `O(1)`** — sirf do sum variables aur loop index use hote hain.
+- **Auxiliary space: `O(1)`** — fixed number of variables use hote hain.
+- **Returned subarray storage: `O(k)`** — output mein `k` elements copy hote hain, aur `k` maximum subarray ki length hai.
 
-## 8. Common mistakes
+## 9. Common mistakes
 
 - `currentSum` ko har step par overall maximum mat samjho. Overall answer `maxSum` mein hai.
 - `maxSum = 0` se initialize mat karo; all-negative input par galat answer aa sakta hai.
@@ -132,18 +189,20 @@ Negative `-1` include karna phir bhi useful hai, kyunki poora continuous subarra
 - Subarray contiguous hota hai: beech ke elements skip nahi kar sakte.
 - Current `currentSum` negative ho gaya ho, toh next element par `Math.max(num, currentSum + num)` automatically fresh start choose kar sakta hai.
 - Empty input standard problem constraints mein allowed nahi hai. Agar production code mein possible ho, input validation add karo.
+- Sum-only version mein `maxSum` return hota hai; actual subarray ke liye indices track karna zaroori hai.
 
-## 9. Interview mein kaise explain karein?
+## 10. Interview mein kaise explain karein?
 
-“I use Kadane's Algorithm. At each index, I decide whether to start a new subarray at the current element or extend the previous subarray. I store the best sum ending at the current index in `currentSum`, and the best sum seen anywhere in `maxSum`. Initializing both with the first element correctly handles all-negative arrays. Time complexity is O(n), and extra space is O(1).”
+“I use Kadane's Algorithm. At each index, I decide whether to start a new subarray at the current element or extend the previous subarray. I store the best sum ending at the current index in `currentSum`, and the best sum seen anywhere in `maxSum`. If the actual subarray is required, I also track a candidate start index and save the best start/end indices whenever a larger sum is found. Time complexity is O(n), with O(1) auxiliary space.”
 
-## 10. Practice
+## 11. Practice
 
-1. `[-2, 1, -3, 4, -1, 2, 1, -5, 4]` → answer: `6` (subarray `[4, -1, 2, 1]`).
-2. `[-1, -2, -3]` → answer: `-1`.
-3. `[1]` → answer: `1`.
+1. `[-2, 1, -3, 4, -1, 2, 1, -5, 4]` → maximum sum: `6`, subarray: `[4, -1, 2, 1]`.
+2. `[-1, -2, -3]` → maximum sum: `-1`, subarray: `[-1]`.
+3. `[1]` → maximum sum: `1`, subarray: `[1]`.
 4. Explain the difference between `currentSum` and `maxSum`.
 5. Why shouldn't we initialize `maxSum` to zero?
+6. Why do we return `Arrays.copyOfRange(nums, start, end + 1)`?
 
 ---
 
