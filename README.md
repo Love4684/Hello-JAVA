@@ -60,7 +60,8 @@ Each topic file follows the same layout so revision is fast:
 - [Coding_SetMatrixZeroes.java](Coding_SetMatrixZeroes.java) — in-place, O(1) extra space (LeetCode 73)
 
 ### 10. DSA — simple, systematic notes
-- [Majority Element — Boyer-Moore Voting Algorithm](DSA/Array/MajorityElement_BoyerMoore.md) — Hinglish explanation, Java solution, dry run, complexity, and interview answer
+- [Majority Element — Boyer-Moore Voting Algorithm](DSA/Array/MajorityElement_BoyerMoore.md) — Hinglish explanation, Java solution, dry run, complexity, edge cases, and verification
+- [Maximum Subarray Sum — Kadane's Algorithm](DSA/Array/KadanesAlgorithm_MaximumSubarraySum.md) — Hinglish explanation, Java solution, dry run, edge cases, and interview answer
 
 ---
 
