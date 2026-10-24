@@ -59,6 +59,9 @@ Each topic file follows the same layout so revision is fast:
 - [Coding_MergeSort.java](Coding_MergeSort.java) — divide & conquer, stable O(n log n)
 - [Coding_SetMatrixZeroes.java](Coding_SetMatrixZeroes.java) — in-place, O(1) extra space (LeetCode 73)
 
+### 10. DSA — simple, systematic notes
+- [Majority Element — Boyer-Moore Voting Algorithm](DSA/Array/MajorityElement_BoyerMoore.md) — Hinglish explanation, Java solution, dry run, complexity, and interview answer
+
 ---
 
 ## How to revise fast (recommended cycle)
