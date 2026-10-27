@@ -81,6 +81,71 @@ class Solution {
 }
 ```
 
+
+## Alternative Approach: DFS + Separate `visited[][]` Array
+
+Use this version when the original grid must remain unchanged. Instead of converting land cells to water, store whether each cell has already been visited in a separate boolean matrix.
+
+### Java Solution
+
+```java
+class Solution {
+    public int numIslands(char[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+        boolean[][] visited = new boolean[rows][cols];
+        int islands = 0;
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == '1' && !visited[r][c]) {
+                    islands++;
+                    dfs(grid, visited, r, c);
+                }
+            }
+        }
+
+        return islands;
+    }
+
+    private void dfs(char[][] grid, boolean[][] visited, int r, int c) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        // Stop if outside the grid, on water, or already visited.
+        if (r < 0 || r >= rows ||
+            c < 0 || c >= cols ||
+            grid[r][c] == '0' ||
+            visited[r][c]) {
+            return;
+        }
+
+        // Mark visited BEFORE exploring neighbors.
+        visited[r][c] = true;
+
+        // Explore up, down, left, and right.
+        dfs(grid, visited, r - 1, c);
+        dfs(grid, visited, r + 1, c);
+        dfs(grid, visited, r, c - 1);
+        dfs(grid, visited, r, c + 1);
+    }
+}
+```
+
+### What Changes Compared with In-place Marking?
+
+- Instead of `grid[r][c] = '0'`, use `visited[r][c] = true`.
+- The DFS base condition also checks `visited[r][c]`.
+- The outer scan starts DFS only when the cell is land and has not been visited.
+- The original `grid` stays unchanged.
+
+### Complexity
+
+- **Time:** `O(m × n)`.
+- **Auxiliary space:** `O(m × n)` for the `visited[][]` matrix, plus up to `O(m × n)` for the recursive call stack.
+- **Trade-off:** This uses extra memory but preserves the input grid, which is often preferable when modifying input is not allowed.
+
+
 ## Boundary Check Explained
 
 For a grid with `rows = 3`, valid row indices are `0, 1, 2`. For `cols = 3`, valid column indices are also `0, 1, 2`.
@@ -111,7 +176,7 @@ Input:
 0 0 1
 ```
 
-1. At `(0, 0)), land is found: `islands = 1`. DFS visits the connected top-left group and changes its land cells to `'0'`.
+1. At `(0, 0)`, land is found: `islands = 1`. DFS visits the connected top-left group and changes its land cells to `'0'`.
 2. The outer scan skips those now-visited cells.
 3. At `(2, 2)`, another land cell is found: `islands = 2`. DFS marks it visited.
 4. No more land remains to discover.
